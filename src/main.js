@@ -1,6 +1,82 @@
 import './style.css';
 import * as THREE from 'three';
 
+const LOGO_COMPLETO = '/brand/logo-completo.png';
+
+/* Pulsanti "Prenota una consulenza": portano al modulo */
+document.querySelectorAll('[data-prenota]').forEach(function(a){ a.href = '#modulo'; });
+
+/* Modulo contatti */
+(function(){
+  var f = document.getElementById('modulo');
+  if(!f) return;
+  var esito = document.getElementById('f-esito'), invia = document.getElementById('f-invia');
+  function dice(t, no){ esito.textContent = t; esito.classList.toggle('no', !!no); }
+  f.addEventListener('submit', function(e){
+    e.preventDefault();
+    var obbligatori = ['f-nome','f-attivita','f-telefono'], manca = null;
+    obbligatori.forEach(function(id){
+      var el = document.getElementById(id), vuoto = !el.value.trim();
+      el.closest('.campo').classList.toggle('errore', vuoto);
+      if(vuoto && !manca) manca = el;
+    });
+    if(manca){ manca.focus(); dice('Compila nome, attività e telefono per inviare la richiesta.', true); return; }
+    if(!document.getElementById('f-privacy').checked){ dice('Spunta il consenso al trattamento dei dati per inviare.', true); return; }
+    if(f.botcheck.value) return;
+
+    var d = new FormData(f);
+    var servizi = d.getAll('servizi').join(', ') || 'non indicato';
+    var righe = [
+      'Nuova richiesta di consulenza dal sito',
+      'Nome: ' + d.get('nome'),
+      'Attività: ' + d.get('attivita') + (d.get('tipo') ? ' (' + d.get('tipo') + ')' : ''),
+      'Telefono: ' + d.get('telefono'),
+      'Email: ' + (d.get('email') || 'non indicata'),
+      'Servizi: ' + servizi,
+      'Budget: ' + (d.get('budget') || 'non indicato'),
+      'Messaggio: ' + (d.get('messaggio') || '-')
+    ];
+
+    function suWhatsApp(){
+      window.open('https://wa.me/393792319527?text=' + encodeURIComponent(righe.join('\n')), '_blank', 'noopener');
+    }
+    invia.disabled = true; dice('Invio in corso…');
+    var dati = {
+      _subject: 'Nuova richiesta dal sito: ' + d.get('attivita'),
+      _template: 'table',
+      _captcha: 'false',
+      Nome: d.get('nome'), Attivita: d.get('attivita'), Tipo: d.get('tipo') || '-',
+      Telefono: d.get('telefono'), Email: d.get('email') || '-',
+      Servizi: servizi, Budget: d.get('budget') || '-', Messaggio: d.get('messaggio') || '-'
+    };
+    if(d.get('email')) dati._replyto = d.get('email');
+    fetch('https://formsubmit.co/ajax/fivestaragency.it@gmail.com', {method:'POST', headers:{'Content-Type':'application/json', Accept:'application/json'}, body:JSON.stringify(dati)})
+      .then(function(r){ return r.json(); })
+      .then(function(r){
+        if(r.success === 'true' || r.success === true){ f.reset(); dice('Richiesta inviata. Ti ricontattiamo al più presto.'); }
+        else { suWhatsApp(); dice('Non siamo riusciti a inviare il modulo: ti abbiamo aperto WhatsApp con la richiesta già scritta.', true); }
+      })
+      .catch(function(){ suWhatsApp(); dice('Invio non riuscito: ti abbiamo aperto WhatsApp con la richiesta già scritta.', true); })
+      .then(function(){ invia.disabled = false; });
+  });
+  f.querySelectorAll('input,select,textarea').forEach(function(el){
+    el.addEventListener('input', function(){ var c = el.closest('.campo'); if(c) c.classList.remove('errore'); });
+  });
+})();
+
+/* Menu su telefono */
+(function(){
+  var b = document.getElementById('burger'), m = document.getElementById('menu');
+  if(!b || !m) return;
+  function chiudi(){ m.classList.remove('aperto'); b.setAttribute('aria-expanded','false'); b.setAttribute('aria-label','Apri il menu'); }
+  b.addEventListener('click', function(){
+    var aperto = m.classList.toggle('aperto');
+    b.setAttribute('aria-expanded', aperto ? 'true' : 'false');
+    b.setAttribute('aria-label', aperto ? 'Chiudi il menu' : 'Apri il menu');
+  });
+  m.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', chiudi); });
+})();
+
 /* Link WhatsApp con il nome del pacchetto già scritto */
 (function(){
   document.querySelectorAll('.pacchetto').forEach(function(card){
@@ -11,14 +87,92 @@ import * as THREE from 'three';
   });
 })();
 
+/* ---------- MOVIMENTO ---------- */
+var muoviPoco = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* Header compatto dopo lo scroll e voce di menu attiva */
+(function(){
+  var nav = document.querySelector('nav');
+  var voci = [].slice.call(document.querySelectorAll('.links a'));
+  var sezioni = voci.map(function(a){ return document.querySelector(a.getAttribute('href')); });
+  var inAttesa = false;
+  function aggiorna(){
+    inAttesa = false;
+    nav.classList.toggle('compatto', window.scrollY > 40);
+    var y = window.scrollY + window.innerHeight * 0.35, attiva = 0;
+    sezioni.forEach(function(s,i){ if(s && s.offsetTop <= y) attiva = i; });
+    voci.forEach(function(a,i){ a.classList.toggle('qui', i === attiva); });
+  }
+  window.addEventListener('scroll', function(){ if(!inAttesa){ inAttesa = true; requestAnimationFrame(aggiorna); } }, {passive:true});
+  aggiorna();
+})();
+
+/* Comparsa morbida delle sezioni */
+(function(){
+  if(muoviPoco || !('IntersectionObserver' in window)) return;
+  var gruppi = ['.testa','.chi-griglia > *','.team .persona','.numeri > div','.servizio','.cinque .s','.pacchetto','.caso','.domanda','.contatti .testo','.modulo'];
+  var elementi = [];
+  gruppi.forEach(function(sel){
+    document.querySelectorAll(sel).forEach(function(el, i){ el.style.setProperty('--i', i % 6); elementi.push(el); });
+  });
+  var oss = new IntersectionObserver(function(voci){
+    voci.forEach(function(v){
+      if(!v.isIntersecting) return;
+      var el = v.target; oss.unobserve(el);
+      el.classList.remove('attesa');
+      // a comparsa finita toglie la transizione lenta, così hover e inclinazione restano scattanti
+      setTimeout(function(){ el.classList.remove('rivela'); }, 1600);
+    });
+  }, {rootMargin:'0px 0px -8% 0px'});
+  elementi.forEach(function(el){
+    // nasconde solo ciò che al caricamento è ancora sotto lo schermo
+    if(el.getBoundingClientRect().top > window.innerHeight){ el.classList.add('rivela','attesa'); oss.observe(el); }
+  });
+})();
+
+/* Numeri che salgono quando compaiono */
+(function(){
+  var numeri = document.querySelectorAll('.numeri b');
+  if(muoviPoco || !('IntersectionObserver' in window)) return;
+  var oss = new IntersectionObserver(function(voci){
+    voci.forEach(function(v){
+      if(!v.isIntersecting) return;
+      oss.unobserve(v.target);
+      var el = v.target, testo = el.textContent, fine = parseInt(testo, 10), suffisso = testo.replace(/[0-9]/g,'');
+      if(isNaN(fine)) return;
+      var t0 = performance.now(), durata = 1400;
+      (function passo(t){
+        var k = Math.min(1, (t - t0) / durata), e = 1 - Math.pow(1 - k, 3);
+        el.textContent = Math.round(fine * e) + suffisso;
+        if(k < 1) requestAnimationFrame(passo);
+      })(t0);
+    });
+  }, {threshold:.6});
+  numeri.forEach(function(n){ oss.observe(n); });
+})();
+
+/* Schede che si inclinano appena seguendo il mouse (solo con mouse, non su telefono) */
+(function(){
+  if(muoviPoco || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  document.querySelectorAll('.pacchetto,.persona').forEach(function(card){
+    card.addEventListener('pointermove', function(e){
+      var r = card.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+      card.style.transform = 'perspective(800px) rotateX(' + (-y * 5) + 'deg) rotateY(' + (x * 6) + 'deg) translateY(-4px)';
+    });
+    card.addEventListener('pointerleave', function(){ card.style.transform = ''; });
+  });
+})();
+
 /* Scena 3D dell'entrata: telefono, icone social, nastro d'oro e stella */
 (function(){
   var box = document.getElementById('scena');
   var renderer;
-  try{ renderer = new THREE.WebGLRenderer({antialias:true, alpha:true}); }catch(e){ return; }
+  // Telefoni e dispositivi meno potenti: meno pixel e meno particelle, così il 3D resta fluido
+  var leggero = window.matchMedia('(max-width: 760px)').matches || (navigator.hardwareConcurrency || 8) <= 4;
+  try{ renderer = new THREE.WebGLRenderer({antialias:!leggero, alpha:true, powerPreference:'high-performance'}); }catch(e){ return; }
   var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, leggero ? 1.5 : 2));
   renderer.outputEncoding = THREE.sRGBEncoding;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
@@ -87,16 +241,17 @@ import * as THREE from 'three';
     var alone = s.createRadialGradient(256,420,0,256,420,300); alone.addColorStop(0,'rgba(201,169,97,.18)'); alone.addColorStop(1,'rgba(201,169,97,0)');
     s.fillStyle=alone; s.fillRect(0,0,512,1024);
     s.fillStyle='#000'; s.beginPath(); s.ellipse(256,44,64,16,0,0,Math.PI*2); s.fill();
-    s.fillStyle=sfumaOro(s,180,260,330,420); stella2d(s,256,340,92,38); s.fill();
+    if(logoSchermo.complete && logoSchermo.naturalWidth){
+      // logo ufficiale al centro dello schermo del telefono
+      var lw = 400, lh = lw * logoSchermo.naturalHeight / logoSchermo.naturalWidth;
+      s.drawImage(logoSchermo, (512 - lw) / 2, 200, lw, lh);
+    } else {
+      s.fillStyle=sfumaOro(s,180,260,330,420); stella2d(s,256,340,92,38); s.fill();
+    }
     s.textAlign='center';
-    s.fillStyle=sfumaOro(s,100,470,420,540);
-    s.font='400 64px "Bodoni Moda", Georgia, serif'; s.fillText('FIVE STAR',256,520);
-    s.font='500 22px Manrope, sans-serif'; s.fillStyle='#C9A961';
-    if('letterSpacing' in s) s.letterSpacing='12px';
-    s.fillText('AGENCY',262,566);
     s.font='400 20px Manrope, sans-serif'; s.fillStyle='#8E8576';
     if('letterSpacing' in s) s.letterSpacing='8px';
-    ['MARKETING','SOCIAL MEDIA','BRANDING','WEB'].forEach(function(t,i){ s.fillText(t,260,680+i*44); });
+    ['MARKETING','SOCIAL MEDIA','BRANDING','WEB'].forEach(function(t,i){ s.fillText(t,260,700+i*44); });
     schermoTex.needsUpdate = true;
   }
   var schermoTex = new THREE.CanvasTexture(schermoTela);
@@ -107,6 +262,9 @@ import * as THREE from 'three';
   (function(){ var uv=schermo.geometry.attributes.uv, p=schermo.geometry.attributes.position; for(var i=0;i<uv.count;i++){ uv.setXY(i,(p.getX(i)+(W-0.16)/2)/(W-0.16),(p.getY(i)+(H-0.16)/2)/(H-0.16)); } uv.needsUpdate=true; })();
   schermo.position.z = D/2+0.051;
   telefono.add(schermo);
+  var logoSchermo = new Image();
+  logoSchermo.onload = disegnaSchermo;
+  logoSchermo.src = LOGO_COMPLETO;
   disegnaSchermo();
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(disegnaSchermo);
 
@@ -121,7 +279,7 @@ import * as THREE from 'three';
     punti.push(new THREE.Vector3(-0.7 + Math.cos(a)*1.75, -2.2 + t*4.6 + Math.sin(a*2)*.15, Math.sin(a)*1.1));
   }
   var curva = new THREE.CatmullRomCurve3(punti);
-  var nastro = new THREE.Mesh(new THREE.TubeGeometry(curva, 260, 0.075, 16, false), oro);
+  var nastro = new THREE.Mesh(new THREE.TubeGeometry(curva, leggero ? 140 : 260, 0.075, leggero ? 10 : 16, false), oro);
   nastro.scale.set(1,1,1);
   mondo.add(nastro);
 
@@ -187,7 +345,7 @@ import * as THREE from 'three';
   mondo.add(roccia);
 
   /* ---------- Polvere d'oro ---------- */
-  var N = 80, pos = new Float32Array(N*3);
+  var N = leggero ? 40 : 80, pos = new Float32Array(N*3);
   for(var n=0;n<N;n++){ pos[n*3]=(Math.random()-.5)*8; pos[n*3+1]=(Math.random()-.5)*6; pos[n*3+2]=-1.5-Math.random()*2; }
   var pg = new THREE.BufferGeometry(); pg.setAttribute('position', new THREE.BufferAttribute(pos,3));
   var polvere = new THREE.Points(pg, new THREE.PointsMaterial({color:0xe2c98e, size:0.026, transparent:true, opacity:.5, depthWrite:false}));
@@ -227,7 +385,14 @@ import * as THREE from 'three';
       stella.rotation.y = -.3;
     }
     renderer.render(scene, camera);
-    requestAnimationFrame(frame);
+    if(attivo) requestAnimationFrame(frame); else inPausa = true;
   }
+  // La scena si ferma quando non si vede (pagina scorsa o scheda in secondo piano): meno batteria e più fluidità
+  var attivo = true, inPausa = false;
+  function riprendi(){ if(attivo && inPausa){ inPausa = false; requestAnimationFrame(frame); } }
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(v){ attivo = v[0].isIntersecting && !document.hidden; riprendi(); }).observe(box);
+  }
+  document.addEventListener('visibilitychange', function(){ attivo = !document.hidden; riprendi(); });
   requestAnimationFrame(frame);
 })();

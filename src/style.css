@@ -133,3 +133,208 @@ footer .social a{text-decoration:none}
 html{scroll-behavior:smooth}
 body{margin:0}
 img{max-width:100%}
+
+/* Menu mobile */
+.burger{display:none;width:44px;height:44px;border:1px solid var(--filo);border-radius:50%;background:transparent;cursor:pointer;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:0}
+.burger span{display:block;width:18px;height:1px;background:var(--champagne-chiaro);transition:transform .3s}
+.burger[aria-expanded="true"] span:first-child{transform:translateY(3.5px) rotate(45deg)}
+.burger[aria-expanded="true"] span:last-child{transform:translateY(-3.5px) rotate(-45deg)}
+.oro{color:var(--champagne)}
+
+/* CHI SIAMO */
+.chi .wrap{padding-block:72px 24px}
+.chi-griglia{display:grid;grid-template-columns:1fr 1.1fr;gap:48px;align-items:start}
+.titolo{font-family:var(--f-display);font-weight:400;font-size:clamp(2rem,3.8vw,3.2rem);line-height:1.1;margin:12px 0 0}
+.titolo em{color:var(--champagne-chiaro)}
+.chi-testo{min-width:0;color:var(--tenue)}
+.chi-testo p{margin:0 0 16px;max-width:36rem}
+.numeri{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:28px;padding-top:24px;border-top:1px solid var(--filo)}
+.numeri b{display:block;font-family:var(--f-display);font-weight:400;font-size:2.2rem;line-height:1;color:var(--champagne-chiaro)}
+.numeri span{font-size:.8rem;line-height:1.4;display:block;margin-top:8px}
+
+/* SERVIZI */
+.servizi .wrap{padding-block:56px 16px}
+.servizi-griglia{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--filo);border-left:1px solid var(--filo)}
+.servizio{padding:28px 26px 30px;border-right:1px solid var(--filo);border-bottom:1px solid var(--filo);min-width:0;transition:background .3s}
+.servizio:hover{background:var(--vetro)}
+.servizio .num{color:var(--champagne)}
+.servizio h3{font-family:var(--f-display);font-weight:400;font-size:1.45rem;margin:14px 0 8px;line-height:1.15}
+.servizio p{margin:0;font-size:.88rem;color:var(--tenue)}
+
+/* PORTFOLIO */
+.portfolio .wrap{padding-block:16px 80px}
+.lavori{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.lavoro{min-width:0}
+.lavoro-img{aspect-ratio:4/3;max-width:100%;border:1px solid var(--filo);border-radius:14px;margin-bottom:18px;display:flex;align-items:center;justify-content:center;background:radial-gradient(70% 70% at 50% 40%,rgba(201,169,97,.14),transparent 70%),var(--notte-2);transition:border-color .3s}
+.lavoro:hover .lavoro-img{border-color:var(--champagne)}
+.lavoro-img span{font-family:var(--f-display);font-style:italic;font-size:2.4rem;color:var(--champagne-chiaro)}
+.lavoro h3{font-family:var(--f-display);font-weight:400;font-size:1.4rem;margin:8px 0 4px}
+.lavoro p{margin:0;font-size:.88rem;color:var(--tenue)}
+
+@media (max-width:960px){
+  .burger{display:flex}
+  nav .wrap{position:relative;flex-wrap:wrap}
+  .links{display:none;position:absolute;top:100%;left:max(28px, env(safe-area-inset-left,0px));right:max(28px, env(safe-area-inset-right,0px));z-index:30;flex-direction:column;gap:0;padding:8px 24px;background:var(--notte-2);border:1px solid var(--filo);border-radius:14px;box-shadow:0 20px 40px rgba(0,0,0,.6)}
+  .links.aperto{display:flex}
+  .links a{padding:14px 0;border-bottom:1px solid var(--filo);font-size:1rem}
+  .links a:last-child{border-bottom:0}
+  .chi-griglia{grid-template-columns:1fr;gap:20px}
+  .servizi-griglia{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .lavori{grid-template-columns:1fr 1fr}
+}
+@media (max-width:560px){
+  .servizi-griglia,.lavori{grid-template-columns:1fr}
+  .numeri b{font-size:1.8rem}
+}
+
+/* Caso studio in evidenza */
+.caso{display:grid;grid-template-columns:minmax(0,1.25fr) 1fr;gap:40px;align-items:center;padding:24px;border:1px solid var(--filo);border-radius:18px;background:linear-gradient(135deg,var(--vetro),transparent 60%);margin-bottom:24px}
+.caso-foto{min-width:0}
+.caso-foto img,.caso-segnaposto{display:block;width:100%;max-width:100%;aspect-ratio:3/2;object-position:30% center;object-fit:cover;border-radius:12px;border:1px solid var(--filo)}
+.caso-segnaposto{display:flex;align-items:center;justify-content:center;background:radial-gradient(70% 70% at 50% 40%,rgba(201,169,97,.16),transparent 70%),var(--notte-2)}
+.caso-segnaposto span{font-family:var(--f-display);font-style:italic;font-size:clamp(2rem,4vw,3rem);color:var(--champagne-chiaro)}
+.caso-testo{min-width:0}
+.caso-testo h3{font-family:var(--f-display);font-weight:400;font-size:clamp(2rem,3.6vw,2.8rem);margin:10px 0 12px;line-height:1.05}
+.caso-testo p{margin:0;color:var(--tenue);max-width:30rem}
+.caso-fatto{list-style:none;padding:0;margin:20px 0 28px;display:flex;flex-wrap:wrap;gap:8px}
+.caso-fatto li{font-size:.76rem;padding:6px 14px;border:1px solid var(--filo);border-radius:999px;color:var(--champagne-chiaro)}
+.caso-link{display:flex;flex-wrap:wrap;gap:12px}
+.lavori{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:960px){ .caso{grid-template-columns:1fr;gap:24px;padding:16px} }
+@media (max-width:560px){ .caso-link .btn{flex:1 1 100%} }
+
+/* Team */
+.team{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:28px 0 4px}
+.persona{display:flex;align-items:center;gap:16px;padding:16px;border:1px solid var(--filo);border-radius:14px;min-width:0}
+.persona>div:last-child{min-width:0}
+.ritratto{flex:none;width:72px;height:72px;border-radius:50%;border:1px solid var(--champagne);overflow:hidden;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 35%,rgba(201,169,97,.2),var(--notte-2) 70%)}
+.ritratto img{width:100%;height:100%;object-fit:cover}
+.ritratto span{font-family:var(--f-display);font-style:italic;font-size:1.8rem;color:var(--champagne-chiaro)}
+.persona h3{font-family:var(--f-display);font-weight:400;font-size:1.4rem;margin:0 0 2px;color:var(--avorio)}
+.persona .label{font-size:.58rem}
+.persona p{margin:4px 0 0;font-size:.82rem;line-height:1.4}
+@media (max-width:560px){ .team{grid-template-columns:1fr} }
+
+
+
+/* FAQ */
+.faq .wrap{padding-block:16px 88px}
+.faq-griglia{display:grid;grid-template-columns:1fr 1.6fr;gap:48px;align-items:start}
+.faq-sotto{color:var(--tenue);margin:20px 0 0;max-width:20rem}
+.faq-sotto a{color:var(--champagne-chiaro);text-underline-offset:4px}
+.domande{min-width:0;border-top:1px solid var(--filo)}
+.domanda{border-bottom:1px solid var(--filo)}
+.domanda summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:22px 0;font-family:var(--f-display);font-size:clamp(1.1rem,1.8vw,1.35rem);color:var(--avorio);transition:color .3s}
+.domanda summary::-webkit-details-marker{display:none}
+.domanda summary:hover{color:var(--champagne-chiaro)}
+.domanda summary i{flex:none;position:relative;width:28px;height:28px;border:1px solid var(--filo);border-radius:50%;transition:transform .4s, border-color .3s}
+.domanda summary i::before,.domanda summary i::after{content:"";position:absolute;left:50%;top:50%;width:10px;height:1px;background:var(--champagne);transform:translate(-50%,-50%)}
+.domanda summary i::after{transform:translate(-50%,-50%) rotate(90deg);transition:transform .4s}
+.domanda[open] summary i{border-color:var(--champagne);transform:rotate(180deg)}
+.domanda[open] summary i::after{transform:translate(-50%,-50%) rotate(0deg)}
+.domanda p{margin:0 0 24px;padding-right:48px;color:var(--tenue);max-width:40rem;animation:apri .4s ease}
+@keyframes apri{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+@media (max-width:960px){ .faq-griglia{grid-template-columns:1fr;gap:24px} .domanda p{padding-right:0} }
+@media (prefers-reduced-motion:reduce){ .domanda p{animation:none} .domanda summary i,.domanda summary i::after{transition:none} }
+
+/* MODULO CONTATTI */
+.contatti .cornice{align-items:start}
+.contatti .azioni{gap:12px}
+.modulo{position:relative;z-index:2;min-width:0;display:flex;flex-direction:column;gap:18px;padding:28px;border:1px solid var(--filo);border-radius:18px;background:linear-gradient(160deg,var(--vetro),transparent 70%),var(--notte-2)}
+.modulo-testa{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 16px}
+.modulo-testa p{margin:0;font-size:.82rem;color:var(--tenue)}
+.campi{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.campo{display:flex;flex-direction:column;gap:6px;min-width:0}
+.campo span,.scelte legend{font-size:.74rem;font-weight:500;color:var(--tenue);letter-spacing:.04em}
+.campo input,.campo select,.campo textarea{width:100%;min-width:0;font:inherit;font-size:16px;font-weight:400;color:var(--avorio);background:var(--notte);border:1px solid var(--filo);border-radius:10px;padding:12px 14px;transition:border-color .3s, box-shadow .3s}
+.campo textarea{resize:vertical;min-height:84px}
+.campo select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--champagne) 50%),linear-gradient(135deg,var(--champagne) 50%,transparent 50%);background-position:calc(100% - 20px) 50%,calc(100% - 15px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:36px}
+.campo input:focus,.campo select:focus,.campo textarea:focus{outline:none;border-color:var(--champagne);box-shadow:0 0 0 3px rgba(201,169,97,.15)}
+.campo.errore input{border-color:#C4614E}
+.scelte{border:0;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.scelte legend{margin-bottom:8px;padding:0}
+.scelte label{cursor:pointer}
+.scelte input{position:absolute;opacity:0;pointer-events:none}
+.scelte span{display:inline-block;padding:8px 14px;border:1px solid var(--filo);border-radius:999px;font-size:.82rem;color:var(--avorio);transition:background .25s, border-color .25s, color .25s, transform .2s}
+.scelte label:hover span{border-color:var(--champagne)}
+.scelte input:checked+span{background:var(--champagne);border-color:var(--champagne);color:var(--notte)}
+.scelte input:focus-visible+span{outline:1px solid var(--champagne);outline-offset:3px}
+.scelte label:active span{transform:scale(.96)}
+.consenso{display:flex;gap:10px;align-items:flex-start;font-size:.8rem;color:var(--tenue);cursor:pointer;line-height:1.5}
+.consenso input{margin-top:3px;accent-color:var(--champagne);width:16px;height:16px;flex:none}
+.trappola{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.modulo .btn{align-self:flex-start;border:0;cursor:pointer;font-family:inherit}
+.modulo .btn[disabled]{opacity:.6;cursor:wait}
+.esito{margin:0;font-size:.88rem;min-height:1.4em;color:var(--champagne-chiaro)}
+.esito.no{color:#E08B79}
+@media (max-width:960px){ .contatti .cornice{grid-template-columns:1fr} }
+@media (max-width:560px){ .campi{grid-template-columns:1fr} .modulo{padding:20px} .modulo .btn{align-self:stretch} }
+.consenso a{color:var(--champagne-chiaro);text-underline-offset:3px}
+
+/* ---------- MOVIMENTO ---------- */
+/* Header che resta in alto e si compatta scorrendo */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:41;background:var(--notte)}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;transition:background .4s, box-shadow .4s, backdrop-filter .4s}
+nav .wrap{transition:padding .4s}
+nav.compatto{background:rgba(7,6,5,.82);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:0 1px 0 var(--filo)}
+nav.compatto .wrap{padding-block:14px}
+
+/* Entrata: titolo, testo e pulsanti salgono in sequenza al caricamento */
+@keyframes sale{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.hero .eyebrow,.hero h1,.hero .lead,.hero .azioni{animation:sale .9s cubic-bezier(.2,.7,.2,1) both}
+.hero h1{animation-delay:.12s}.hero .lead{animation-delay:.26s}.hero .azioni{animation-delay:.4s}
+
+/* Comparsa morbida mentre si scorre (solo per ciò che è sotto la piega al caricamento) */
+.rivela{transition:opacity .9s cubic-bezier(.2,.7,.2,1), transform .9s cubic-bezier(.2,.7,.2,1);transition-delay:calc(var(--i,0) * 90ms)}
+.rivela.attesa{opacity:0;transform:translateY(28px)}
+
+/* Pulsanti: riflesso dorato che attraversa il pulsante */
+.btn-oro{position:relative;overflow:hidden;isolation:isolate}
+.btn-oro::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(110deg,transparent 30%,rgba(255,250,235,.55) 50%,transparent 70%);transform:translateX(-120%);transition:transform .8s ease}
+.btn-oro:hover::after{transform:translateX(120%)}
+.btn:active{transform:scale(.97)}
+.btn .freccia{transition:width .3s}
+.btn:hover .freccia{width:26px}
+
+/* Schede: leggera inclinazione 3D seguendo il mouse */
+.pacchetto,.servizio,.persona{transform-style:preserve-3d;will-change:transform}
+.pacchetto:hover{box-shadow:0 24px 50px rgba(0,0,0,.5),0 0 0 1px var(--champagne)}
+.pacchetto .stelle{transition:letter-spacing .4s, color .4s}
+.pacchetto:hover .stelle{letter-spacing:6px;color:var(--champagne-chiaro)}
+.servizio .num{display:inline-block;transition:transform .4s}
+.servizio:hover .num{transform:translateX(6px)}
+.lavoro-img,.caso-foto img{transition:transform .8s cubic-bezier(.2,.7,.2,1), border-color .3s}
+.caso:hover .caso-foto img{transform:scale(1.02)}
+.caso-foto{overflow:hidden;border-radius:12px}
+
+/* Link del menu con sottolineatura dorata */
+.links a{position:relative}
+@media (min-width:961px){
+  .links a::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:1px;background:var(--champagne);transform:scaleX(0);transform-origin:left;transition:transform .35s}
+  .links a:hover::after,.links a.qui::after{transform:scaleX(1)}
+}
+/* Menu mobile che scende morbido */
+@media (max-width:960px){
+  .links.aperto{animation:scende .35s cubic-bezier(.2,.7,.2,1)}
+}
+@keyframes scende{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+
+/* Pulsante WhatsApp che pulsa piano, solo una volta ogni tanto */
+@keyframes richiamo{0%,92%,100%{box-shadow:0 10px 30px rgba(0,0,0,.5),0 0 0 0 rgba(201,169,97,.5)}96%{box-shadow:0 10px 30px rgba(0,0,0,.5),0 0 0 12px rgba(201,169,97,0)}}
+.wa-fisso{animation:richiamo 8s ease-out 3s infinite}
+
+@media (prefers-reduced-motion:reduce){
+  .hero .eyebrow,.hero h1,.hero .lead,.hero .azioni,.wa-fisso,.links.aperto{animation:none}
+  .rivela,.rivela.attesa{transition:none;opacity:1;transform:none}
+  .btn-oro::after{display:none}
+  nav,nav .wrap{transition:none}
+}
+.btn{text-align:center}
+
+/* Logo ufficiale */
+.logo img{width:40px;height:auto;flex:none}
+nav.compatto .logo img{width:34px}
+.logo img{transition:width .4s}
+.logo-piede{display:block;text-decoration:none}
+.logo-piede img{display:block;width:180px;height:auto;max-width:100%}
+.scena .riserva{object-fit:contain;width:auto;height:auto;max-width:50%;max-height:60%;margin:auto}
